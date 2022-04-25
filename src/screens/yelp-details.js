@@ -4,6 +4,8 @@ import axios from "axios";
 import SearchBar from "../components/search-bar";
 import Nav from "../components/nav";
 import * as bookmarkService from "../services/bookmark-service";
+import * as reviewService from "../services/review-service";
+import SecureContent from "../components/secure-content";
 import {useProfile} from "../context/profile-context";
 const BASE_DETAIL_URL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses";
 const YELP_API_KEY = 'OEWy2lxOSpGjMw-12D4Rw2M7P2KID4hcc6rEoLpVUPQu91uYpf9n194fzmKh8mWIyIgyINuFzDX0NfYGO60bwvPEcXGob_TfkLLQMcqO5PFR6fC0r9vyaoylm2dTYnYx';
@@ -11,13 +13,17 @@ const YELP_API_KEY = 'OEWy2lxOSpGjMw-12D4Rw2M7P2KID4hcc6rEoLpVUPQu91uYpf9n194fzm
 const YelpDetails = () => {
     const {profile} = useProfile()
     const [businessDetails, setBusinessDetails] = useState({})
-    const [bookmarkBusinessDetails, setBookmarkBusinessDetails] = useState({})
+    const [reviews, setReviews] = useState([])
     const {businessId} = useParams();
     const currEmail = profile.email
     const currUid = profile.uid
     const followed = async () => {
         const currUserBookmarks = await bookmarkService.findUserBookmarks(currEmail)
         return currUserBookmarks.includes(businessId)
+    }
+    const getReviews = async () => {
+        const currBusinessReviews = await reviewService.findBusinessReviews(businessId)
+        setReviews(currBusinessReviews)
     }
     const handleBookmark = async () => {
         const currUserBookmarks = await bookmarkService.findUserBookmarks(currEmail)
@@ -36,7 +42,9 @@ const YelpDetails = () => {
     }
     useEffect(()=>{
         searchBusinessById();
+        getReviews();
     }, []);
+    const reviewNumber = reviews.length || 0;
     return (
         <div className="container row">
             <SearchBar/>
@@ -56,10 +64,35 @@ const YelpDetails = () => {
                             <div className="ms-2">Price: {businessDetails.price || ""}</div>
                             <div className="ms-2">Address: {"to be updated"}</div>
                             <div className="ms-2">Phone Number: {businessDetails.display_phone || ""}</div>
+                            <div className="ms-2">Reviews: {reviewNumber}</div>
                         </p>
-                        <button
-                            className="btn btn-primary ms-3 col-4"
-                            onClick={handleBookmark}>Add to Bookmark</button>
+                        <SecureContent>
+                            <button
+                                className="btn btn-primary ms-3 col-4"
+                                onClick={handleBookmark}>Add to Bookmark</button>
+                        </SecureContent>
+                    </div>
+                    <div className="container">
+                        <h1 className="ms-2 mt-2">
+                            Reviews
+                        </h1>
+                        <ul className="list-group">
+                            {
+                                reviews.map && reviews.map(review =>
+                                    <div className="list-group-item">
+                                        <div>
+                                            {review.userReview}
+                                        </div>
+                                        <div>
+                                            {review.userReviewRating}
+                                        </div>
+                                        <div>
+                                            {review.userReviewDate}
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        </ul>
                     </div>
                 </div>
             </div>
