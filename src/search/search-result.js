@@ -1,12 +1,21 @@
-import React, {useState} from 'react';
-import {Link, useParams} from "react-router-dom";
+import React from 'react';
+import {Link} from "react-router-dom";
+import {useSearch} from "../context/search-context";
 
-const SearchResult = (props) => {
+const SearchResult = () => {
+    const {businesses} = useSearch();
+    if (!businesses) {
+        return (
+            <div>
+                abc
+            </div>
+        )
+    }
     return (
         <div>
             <ul className="list-group">
                 {
-                    props.businesses.map(bus =>
+                    businesses.map(bus =>
                         <li className="list-group-item row">
                             <img src={bus.image_url} className="me-2 mt-2 col-2 float-start" height={130}/>
                             <div className="col-10">
