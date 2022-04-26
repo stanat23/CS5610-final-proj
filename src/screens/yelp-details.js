@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import SearchBar from "../components/search-bar";
 import Nav from "../components/nav";
@@ -14,7 +14,13 @@ const YelpDetails = () => {
     const {profile} = useProfile()
     const [businessDetails, setBusinessDetails] = useState({})
     const [reviews, setReviews] = useState([])
+    const [newReview, setNewReview] = useState({
+        userReview: '',
+        userReviewRating: 5,
+        userReviewDate: new Date()
+    })
     const {businessId} = useParams();
+    const navigate = useNavigate();
     const currEmail = profile.email
     const currUid = profile.uid
     const followed = async () => {
@@ -32,6 +38,10 @@ const YelpDetails = () => {
         } else {
             await bookmarkService.deleteBookmark(currUid, businessId, currUserBookmarks)
         }
+    }
+    const handlePostReview = async () => {
+        await reviewService.postReview(newReview)
+        navigate(`/details/${businessId}`)
     }
     const searchBusinessById = async () => {
         const response = await axios.get(`${BASE_DETAIL_URL}/${businessId}`,
@@ -76,6 +86,16 @@ const YelpDetails = () => {
                         <h1 className="ms-2 mt-2">
                             Reviews
                         </h1>
+                        <div>
+                            <textarea className="form-control w-75"
+                                      onChange={(e) =>
+                                          setNewReview({...newReview,
+                                              userReview: e.target.value})}/>
+                            <button onClick={handlePostReview}
+                                    className="btn btn-primary float-end">
+                                Post Your Review
+                            </button>
+                        </div>
                         <ul className="list-group">
                             {
                                 reviews.map && reviews.map(review =>
