@@ -8,12 +8,13 @@ const YELP_API_KEY = 'OEWy2lxOSpGjMw-12D4Rw2M7P2KID4hcc6rEoLpVUPQu91uYpf9n194fzm
 const SearchBar = () => {
     const termSearchRef = useRef();
     const locationSearchRef = useRef();
-    const {businessSearch, locationSearch} = useParams();
+    const {businessSearch} = useParams();
+    const {locationSearch} = useParams();
     const {updateBusinesses} = useSearch();
     const nav = useNavigate();
     const searchBy = async () => {
-        const locationString = locationSearchRef.current.value || businessSearch || 'boston';
-        const searchString = termSearchRef.current.value || locationSearch || 'starbucks';
+        const locationString = locationSearchRef.current.value || locationSearch || 'boston';
+        const searchString = termSearchRef.current.value || businessSearch || 'starbucks';
         const response = await axios.get(`${BASE_URL}?term=${searchString}&location=${locationString}`,
             {headers: {
                     Authorization: `Bearer ${YELP_API_KEY}`,
@@ -49,7 +50,7 @@ const SearchBar = () => {
                     id="search-location"/>
             </div>
             <button
-                onClick={searchBy}
+                onClick={() => searchBy}
                 className="btn btn-primary col-1 m-3 float-end">
                 <i className="fas fa-search fa-2x"/>
             </button>

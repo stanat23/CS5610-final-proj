@@ -21,8 +21,9 @@ const YelpDetails = () => {
     })
     const {businessId} = useParams();
     const navigate = useNavigate();
-    const currEmail = profile.email
-    const currUid = profile.uid
+    const currEmail = profile ? profile.email : ''
+    const currUid = profile ? profile.uid : ''
+    console.log(profile)
     const followed = async () => {
         const currUserBookmarks = await bookmarkService.findUserBookmarks(currEmail)
         return currUserBookmarks.includes(businessId)
@@ -79,7 +80,7 @@ const YelpDetails = () => {
                         <SecureContent>
                             <button
                                 className="btn btn-primary ms-3 col-4"
-                                onClick={handleBookmark}>Add to Bookmark</button>
+                                onClick={() => handleBookmark}>Add to Bookmark</button>
                         </SecureContent>
                     </div>
                     <div className="container">
@@ -91,7 +92,7 @@ const YelpDetails = () => {
                                       onChange={(e) =>
                                           setNewReview({...newReview,
                                               userReview: e.target.value})}/>
-                            <button onClick={handlePostReview}
+                            <button onClick={() => handlePostReview}
                                     className="btn btn-primary float-end">
                                 Post Your Review
                             </button>
