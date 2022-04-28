@@ -10,40 +10,35 @@ const YELP_API_KEY = 'OEWy2lxOSpGjMw-12D4Rw2M7P2KID4hcc6rEoLpVUPQu91uYpf9n194fzm
 
 const YelpDetails = () => {
     const {profile} = useProfile()
+    console.log(profile ? profile.email : 'nope')
     const [businessDetails, setBusinessDetails] = useState({})
     const [reviews, setReviews] = useState([])
-    const [newReview, setNewReview] = useState({
-        userReview: '',
-        userReviewRating: 5,
-        userReviewDate: new Date()
-    })
     const {businessId} = useParams();
+    const [newReview, setNewReview] = useState('')
     const navigate = useNavigate();
-    const currEmail = profile ? profile.email : ''
-    const currUid = profile ? profile.uid : ''
-    const followed = async () => {
-        if (profile) {
-            const currUserBookmarks = await bookmarkService.findUserBookmarks(currEmail)
-            return currUserBookmarks.includes(businessId)
-        }
-    }
     const getReviews = async () => {
         const currBusinessReviews = await reviewService.findBusinessReviews(businessId)
         setReviews(currBusinessReviews)
     }
-    const handleBookmark = async () => {
+    const handleAddBookmark = async () => {
         if (profile) {
-            const currUserBookmarks = await bookmarkService.findUserBookmarks(currEmail)
-            if (!followed) {
-                await bookmarkService.addBookmark(currUid, businessId, currUserBookmarks)
-            } else {
-                await bookmarkService.deleteBookmark(currUid, businessId, currUserBookmarks)
-            }
+            await bookmarkService.addBookmark(profile._id, businessId, profile.email).then(
+                alert('added to bookmarks!')
+            )
+        }
+    }
+    const handleDeleteBookmark = async () => {
+        if (profile) {
+            await bookmarkService.deleteBookmark(profile._id, businessId).then(
+                alert('removed from bookmarks!')
+            )
         }
     }
     const handlePostReview = async () => {
-        await reviewService.postReview(newReview)
-        navigate(`/details/${businessId}`)
+        if (profile) {
+            await reviewService.postReview(profile._id, profile.email, profile.firstName, profile.lastName, businessId, 5, newReview, new Date())
+            navigate(`/details/${businessId}`)
+        }
     }
     const searchBusinessById = async () => {
         const response = await axios.get(`${BASE_DETAIL_URL}/${businessId}`,
@@ -63,23 +58,28 @@ const YelpDetails = () => {
     return (
                 <div className="row">
                     <img
-                        className="ms-2 mt-4 col-2 float-end"
+                        className="ms-2 mt-4 col-3 float-end"
                         src={businessDetails.image_url}
                         height={180}/>
-                    <div className="row col-10">
+                    <div className="row col-5">
                         <h1 className="ms-2 mt-2">{businessDetails.name}</h1>
-                        <p>
+                        <div>
                             <div className="ms-2">Yelp Rating: {businessDetails.rating || ""}</div>
                             <div className="ms-2">Our Users Rating: {avgRating===0 ? "not available" : avgRating}</div>
                             <div className="ms-2">Price: {businessDetails.price || ""}</div>
                             <div className="ms-2">Address: {businessDetails.location ? businessDetails.location.display_address.join(", ") : "to be updated"}</div>
                             <div className="ms-2">Phone Number: {businessDetails.display_phone || ""}</div>
                             <div className="ms-2">Reviews: {reviewNumber}</div>
-                        </p>
+                        </div>
+                    </div>
+                    <div className="col-3">
                         <SecureContent>
                             <button
-                                className="btn btn-primary ms-3 col-4"
-                                onClick={handleBookmark}>Add to Bookmark</button>
+                                className="btn btn-primary mt-3"
+                                onClick={handleAddBookmark}>Add to Bookmark</button>
+                            <button
+                                className="btn btn-primary mt-3"
+                                onClick={handleDeleteBookmark}>Remove from Bookmark</button>
                         </SecureContent>
                     </div>
                     <div className="container">
@@ -90,8 +90,7 @@ const YelpDetails = () => {
                             <div className="row m-3">
                                 <textarea className="me-3 col-8"
                                       onChange={(e) =>
-                                          setNewReview({...newReview,
-                                              userReview: e.target.value})}/>
+                                          setNewReview(e.target.value)}/>
                                 <button onClick={handlePostReview}
                                         className="btn btn-primary ms-3 col-2 float-end">
                                     Post

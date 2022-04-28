@@ -2,8 +2,8 @@ import axios from "axios";
 const SERVER_API_URL = "https://cs5610-final-yelp-server.herokuapp.com/api"
 const api = axios.create({withCredentials: true})
 
-export const postReview = async (review) => {
-    const response = await api.post(`${SERVER_API_URL}/reviews`, {review})
+export const postReview = async (uid, email,firstName, lastName, businessId, userReviewRating, userReview, userReviewDate) => {
+    const response = await api.post(`${SERVER_API_URL}/reviews`, {uid, email, firstName, lastName, businessId, userReviewRating, userReview, userReviewDate})
     return response.data
 }
 

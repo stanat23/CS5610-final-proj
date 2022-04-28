@@ -2,8 +2,8 @@ import axios from "axios";
 const SERVER_API_URL = "https://cs5610-final-yelp-server.herokuapp.com/api"
 const api = axios.create({withCredentials: true})
 
-export const addFollowing = async (uid, fuid, following) => {
-    const response = await api.post(`${SERVER_API_URL}/followings/${uid}/${fuid}`, {following})
+export const addFollowing = async (uid, fuid, email, following) => {
+    const response = await api.post(`${SERVER_API_URL}/followings/${uid}/${fuid}`, {uid, email, following})
     return response.data
 }
 

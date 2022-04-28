@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react'
-import {useProfile} from "../context/profile-context";
 import SecureContent from "../components/secure-content";
 import useGeoLocation from "../hooks/useGeoLocation";
 import axios from "axios";
@@ -8,22 +7,22 @@ const BASE_SEARCH_URL = 'https://cors-anywhere.herokuapp.com/https://api.yelp.co
 const YELP_API_KEY = 'OEWy2lxOSpGjMw-12D4Rw2M7P2KID4hcc6rEoLpVUPQu91uYpf9n194fzmKh8mWIyIgyINuFzDX0NfYGO60bwvPEcXGob_TfkLLQMcqO5PFR6fC0r9vyaoylm2dTYnYx';
 
 const HomeScreen = () => {
-    const {profile} = useProfile()
     const location = useGeoLocation()
+    const lat = location.coordinates.lat;
+    const lng = location.coordinates.lng;
     const [restaurants, setRestaurants] = useState([])
     const searchRestaurantsNearby = async () => {
         const termString = 'restaurant';
-        const lat = location.coordinates.lat;
-        const lng = location.coordinates.lng;
         const response = await axios.get(`${BASE_SEARCH_URL}?latitude=${lat}&longitude=${lng}&term=${termString}`,
             {headers: {
                     Authorization: `Bearer ${YELP_API_KEY}`,
                 }})
         setRestaurants(response.data.businesses);
     }
+
     useEffect(() => {
         searchRestaurantsNearby();
-    }, [])
+    }, [lat, lng])
     return (
         <div>
             <div className="container border-light border-2 border">
@@ -58,15 +57,21 @@ const HomeScreen = () => {
                             restaurants.map(bus =>
                                 <li className="list-group-item row">
                                     <img src={bus.image_url} className="me-2 mt-2 col-2 float-start" height={130}/>
-                                    <div className="col-10">
+                                    <div className="col-9">
                                         <Link to={`/details/${bus.id}`}>
                                             {bus.name}
                                         </Link>
                                         <div>
-                                            rating: {bus.rating}
+                                            Yelp rating: {bus.rating}
                                         </div>
                                         <div>
-                                            address: {bus.location.display_address.join(', ')}
+                                            Address: {bus.location.display_address.join(', ')}
+                                        </div>
+                                        <div>
+                                            Phone: {bus.display_phone}
+                                        </div>
+                                        <div>
+                                            Price: {bus.price}
                                         </div>
                                     </div>
                                 </li>

@@ -13,13 +13,16 @@ const SearchBar = () => {
     const {updateBusinesses} = useSearch();
     const nav = useNavigate();
     const searchBy = async () => {
-        const locationString = locationSearchRef.current.value || locationSearch || 'boston';
-        const searchString = termSearchRef.current.value || businessSearch || 'starbucks';
-        const response = await axios.get(`${BASE_URL}?term=${searchString}&location=${locationString}`,
-            {headers: {
-                    Authorization: `Bearer ${YELP_API_KEY}`,
-                }})
-        updateBusinesses(response.data.businesses);
+        const locationString = locationSearchRef.current.value || locationSearch;
+        const searchString = termSearchRef.current.value || businessSearch;
+        if (locationString && searchString) {
+            const response = await axios.get(`${BASE_URL}?term=${searchString}&location=${locationString}`,
+                {headers: {
+                        Authorization: `Bearer ${YELP_API_KEY}`,
+                        Origin: 'localhost',
+                    }})
+            updateBusinesses(response.data.businesses);
+        }
     }
     const searchButtonHandler = () => {
         const locationString = locationSearchRef.current.value || locationSearch || 'boston';
@@ -31,7 +34,7 @@ const SearchBar = () => {
     }
     useEffect(()=>{
         searchBy();
-    }, []);
+    }, [locationSearch, businessSearch]);
     return (
         <div className="row m-3 bg-danger" style={{height: 80}}>
             <div className="col-5 m-3">
