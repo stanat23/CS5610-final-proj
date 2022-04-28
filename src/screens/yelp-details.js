@@ -5,6 +5,7 @@ import * as bookmarkService from "../services/bookmark-service";
 import * as reviewService from "../services/review-service";
 import SecureContent from "../components/secure-content";
 import {useProfile} from "../context/profile-context";
+import Rating from 'react-rating';
 const BASE_DETAIL_URL = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses";
 const YELP_API_KEY = 'OEWy2lxOSpGjMw-12D4Rw2M7P2KID4hcc6rEoLpVUPQu91uYpf9n194fzmKh8mWIyIgyINuFzDX0NfYGO60bwvPEcXGob_TfkLLQMcqO5PFR6fC0r9vyaoylm2dTYnYx';
 
@@ -13,6 +14,7 @@ const YelpDetails = () => {
     console.log(profile ? profile.email : 'nope')
     const [businessDetails, setBusinessDetails] = useState({})
     const [reviews, setReviews] = useState([])
+    const [newRating, setNewRating] = useState('0');
     const {businessId} = useParams();
     const [newReview, setNewReview] = useState('')
     const navigate = useNavigate();
@@ -36,7 +38,7 @@ const YelpDetails = () => {
     }
     const handlePostReview = async () => {
         if (profile) {
-            await reviewService.postReview(profile._id, profile.email, profile.firstName, profile.lastName, businessId, 5, newReview, new Date())
+            await reviewService.postReview(profile._id, profile.email, profile.firstName, profile.lastName, businessId, newRating, newReview, new Date())
             navigate(`/details/${businessId}`)
         }
     }
@@ -87,7 +89,32 @@ const YelpDetails = () => {
                             Reviews
                         </h1>
                         <SecureContent>
-                            <div className="row m-3">
+                            <div className="row m-2 mb-3">
+                                <div className="container mb-3">
+                                    <label className="mb-1" style={{fontSize: 18}}>Your Rating:</label><br/>
+                                    <input type="radio" value="5"
+                                           name="radio-genre" id="radio-rating"
+                                           onChange={event => setNewRating(event.target.value)}
+                                    />
+                                    <label htmlFor="radio-rating" style={{fontSize: 22}} className="me-3"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></label>
+                                    <input type="radio" value="4"
+                                           name="radio-genre" id="radio-rating"
+                                           onChange={event => setNewRating(event.target.value)}
+                                    />
+                                    <label htmlFor="radio-rating" style={{fontSize: 22}} className="me-3"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></label>
+                                    <input type="radio" value="3"
+                                           name="radio-genre" id="radio-rating"
+                                           onChange={event => setNewRating(event.target.value)}/>
+                                    <label htmlFor="radio-rating" style={{fontSize: 22}} className="me-3"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></label>
+                                    <input type="radio" value="2"
+                                           name="radio-genre" id="radio-rating"
+                                           onChange={event => setNewRating(event.target.value)}/>
+                                    <label htmlFor="radio-rating" style={{fontSize: 22}} className="me-3"><span>&#9733;</span><span>&#9733;</span></label>
+                                    <input type="radio" value="1"
+                                           name="radio-genre" id="radio-rating"
+                                           onChange={event => setNewRating(event.target.value)}/>
+                                    <label htmlFor="radio-rating" style={{fontSize: 22}} className="me-3"><span>&#9733;</span></label>
+                                </div>
                                 <textarea className="me-3 col-8"
                                       onChange={(e) =>
                                           setNewReview(e.target.value)}/>
