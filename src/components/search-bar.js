@@ -18,7 +18,6 @@ const SearchBar = () => {
         const response = await axios.get(`${BASE_URL}?term=${searchString}&location=${locationString}`,
             {headers: {
                     Authorization: `Bearer ${YELP_API_KEY}`,
-                    Origin: 'localhost',
                 }})
         updateBusinesses(response.data.businesses);
     }

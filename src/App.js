@@ -6,6 +6,7 @@ import Signin from './screens/sign-in'
 import Signup from './screens/sign-up'
 import Profile from "./screens/profile";
 import YelpDetails from "./screens/yelp-details";
+import HomeScreen from "./screens/home"
 import Search from "./search/search";
 import SecureRoute from "./components/secure-route";
 import {SearchProvider} from "./context/search-context";
@@ -27,6 +28,8 @@ function App() {
                           </div>
                           <div className="col-10">
                               <Routes>
+                                  <Route path="/" element={<HomeScreen/>}/>
+                                  <Route path="/home" element={<HomeScreen/>}/>
                                   <Route path="/signup" element={<Signup/>}/>
                                   <Route path="/signin" element={<Signin/>}/>
                                   <Route path="/profile" element={

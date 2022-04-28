@@ -7,7 +7,7 @@ const SearchResult = () => {
     if (!businesses) {
         return (
             <div>
-                abc
+                Sorry... We cannot find anything with your searching criteria
             </div>
         )
     }
