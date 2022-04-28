@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
-import SearchBar from "../components/search-bar";
-import Nav from "../components/nav";
 import * as bookmarkService from "../services/bookmark-service";
 import * as reviewService from "../services/review-service";
 import SecureContent from "../components/secure-content";
