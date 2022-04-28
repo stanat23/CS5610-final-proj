@@ -18,11 +18,17 @@ const SearchBar = () => {
         const response = await axios.get(`${BASE_URL}?term=${searchString}&location=${locationString}`,
             {headers: {
                     Authorization: `Bearer ${YELP_API_KEY}`,
+                    Origin: 'localhost',
                 }})
+        updateBusinesses(response.data.businesses);
+    }
+    const searchButtonHandler = () => {
+        const locationString = locationSearchRef.current.value || locationSearch || 'boston';
+        const searchString = termSearchRef.current.value || businessSearch || 'starbucks';
+        searchBy();
+        nav(`/search/${locationString}/${searchString}`);
         termSearchRef.current.value = searchString;
         locationSearchRef.current.value = locationString;
-        updateBusinesses(response.data.businesses);
-        nav(`/search/${locationString}/${searchString}`);
     }
     useEffect(()=>{
         searchBy();
@@ -50,7 +56,7 @@ const SearchBar = () => {
                     id="search-location"/>
             </div>
             <button
-                onClick={() => searchBy}
+                onClick={searchButtonHandler}
                 className="btn btn-primary col-1 m-3 float-end">
                 <i className="fas fa-search fa-2x"/>
             </button>
